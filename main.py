@@ -12,21 +12,6 @@ print("Vk - ok")
 bot = commands.Bot(command_prefix = discord_settings['prefix'])
 playlist = []
 
-
-@bot.command(
-    name="set",
-    pass_context=True
-)
-async def botSet(ctx, url):
-    global playlist
-    try:
-        owner_id, playlist_id = url.split('/')[-1].split("_")
-        audios = vk.method("audio.get", owner_id=owner_id, playlist_id=playlist_id)['response']
-        playlist = list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
-    except Exception as e:
-        await ctx.send("Wrong url, must be like: https://vk.com/music/playlist/111111111_1")
-
-
 def play(voice):
     global playlist
     if playlist == []:
@@ -34,20 +19,30 @@ def play(voice):
     else:
         now = playlist[0]
         playlist = playlist[1:]
-        voice.play(FFmpegOpusAudio(now), after=lambda x: play(voice))
+        try:
+            voice.play(FFmpegOpusAudio(now), after=lambda x: play(voice))
+        except Exception as e:
+            return
 
 
 @bot.command(
     name='play',
     pass_context=True,
 )
-async def botPlay(ctx):
+async def botPlay(ctx, url):
+    global playlist
     connected = ctx.author.voice
     if not connected:
         return
     voice = await connected.channel.connect()
 
     if not voice.is_playing():
+        try:
+            owner_id, playlist_id = url.split('/')[-1].split("_")
+            audios = vk.method("audio.get", owner_id=owner_id, playlist_id=playlist_id)['response']
+            playlist = list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
+        except Exception as e:
+            await ctx.send("Wrong url, must be like: https://vk.com/music/playlist/111111111_1")
         play(voice)
     else:
         await ctx.send("Already playing audio.")
@@ -55,15 +50,15 @@ async def botPlay(ctx):
 
 
 @bot.command(
-    name='skip',
+    name='next',
     pass_context=True,
 )
-async def botSkip(ctx):
+async def botNext(ctx):
     global playlist
     if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
         ctx.voice_client.stop()
     else:
-        await ctx.send('You have to be connected to the same voice channel to skip.')
+        await ctx.send('You have to be connected to the same voice channel to next.')
 
 
 @bot.command(
@@ -72,7 +67,6 @@ async def botSkip(ctx):
 )
 async def botStop(ctx):
     if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
-        ctx.voice_client.stop()
         await ctx.voice_client.disconnect()
     else:
         await ctx.send('You have to be connected to the same voice channel to disconnect me.')
