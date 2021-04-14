@@ -4,6 +4,7 @@ from discord.utils import get
 from discord import FFmpegOpusAudio
 from config import discord_settings, vk_settings
 from vk.vkAndroidApi import VkAndroidApi
+import threading
 
 vk = VkAndroidApi(login=vk_settings['login'], password=vk_settings['password'])
 secret, token = vk.secret, vk.token
@@ -17,12 +18,15 @@ def play(voice):
     if playlist == []:
         return
     else:
-        now = playlist[0]
-        playlist = playlist[1:]
-        try:
-            voice.play(FFmpegOpusAudio(now), after=lambda x: play(voice))
-        except Exception as e:
-            return
+        event = threading.Event()
+        for track in playlist:
+            event.clear()
+            try:
+                voice.play(FFmpegOpusAudio(playlist[0]), after=lambda x: event.set())
+            except Exception as e:
+                return
+            event.wait()
+            playlist = playlist[1:] + [playlist[0]]
 
 
 @bot.command(
@@ -43,7 +47,7 @@ async def botPlay(ctx, url):
             playlist = list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
         except Exception as e:
             await ctx.send("Wrong url, must be like: https://vk.com/music/playlist/111111111_1")
-        play(voice)
+        threading.Thread(name="player", target=play, args=(voice,)).start()
     else:
         await ctx.send("Already playing audio.")
         return
@@ -59,6 +63,20 @@ async def botNext(ctx):
         ctx.voice_client.stop()
     else:
         await ctx.send('You have to be connected to the same voice channel to next.')
+
+
+@bot.command(
+    name='prev',
+    pass_context=True,
+)
+async def botPrev(ctx):
+    global playlist
+    if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
+        playlist = [playlist[-1]] + playlist[:-1]
+        playlist = [playlist[-1]] + playlist[:-1]
+        ctx.voice_client.stop()
+    else:
+        await ctx.send('You have to be connected to the same voice channel to prev.')
 
 
 @bot.command(
