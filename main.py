@@ -38,6 +38,8 @@ async def botPlay(ctx, url):
     connected = ctx.author.voice
     if not connected:
         return
+    if ctx.voice_client:
+        await ctx.voice_client.disconnect()
     voice = await connected.channel.connect()
 
     if not voice.is_playing():
@@ -63,6 +65,30 @@ async def botNext(ctx):
         ctx.voice_client.stop()
     else:
         await ctx.send('You have to be connected to the same voice channel to next.')
+
+
+@bot.command(
+    name='pause',
+    pass_context=True,
+)
+async def botPause(ctx):
+    global playlist
+    if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
+        ctx.voice_client.pause()
+    else:
+        await ctx.send('You have to be connected to the same voice channel to pause.')
+
+
+@bot.command(
+    name='resume',
+    pass_context=True,
+)
+async def botResume(ctx):
+    global playlist
+    if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
+        ctx.voice_client.resume()
+    else:
+        await ctx.send('You have to be connected to the same voice channel to resume.')
 
 
 @bot.command(
