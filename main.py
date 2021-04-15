@@ -35,20 +35,23 @@ def play(voice):
 )
 async def botPlay(ctx, url):
     global playlist
-    connected = ctx.author.voice
-    if not connected:
+    if not ctx.author.voice:
         return
     if ctx.voice_client:
         await ctx.voice_client.disconnect()
-    voice = await connected.channel.connect()
+    voice = await ctx.author.voice.channel.connect()
 
     if not voice.is_playing():
         try:
+            assert('/'.join(url.split('/')[:-1]) == "https://vk.com/music/playlist" or\
+                   '/'.join(url.split('/')[:-1]) == "https://vk.com/music/album")
+            assert(len(url.split('/')[-1].split('_')) == 2)
             owner_id, playlist_id = url.split('/')[-1].split("_")
             audios = vk.method("audio.get", owner_id=owner_id, playlist_id=playlist_id)['response']
             playlist = list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
         except Exception as e:
-            await ctx.send("Wrong url, must be like: https://vk.com/music/playlist/111111111_1")
+            await ctx.send("Wrong url, must be like: https://vk.com/music/playlist/111111111_1 or https://vk.com/music/album/111111111_1")
+            return
         threading.Thread(name="player", target=play, args=(voice,)).start()
     else:
         await ctx.send("Already playing audio.")
