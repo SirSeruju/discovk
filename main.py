@@ -5,6 +5,7 @@ from discord import FFmpegOpusAudio
 from config import discord_settings, vk_settings
 from vk.vkAndroidApi import VkAndroidApi
 import threading
+import random
 
 vk = VkAndroidApi(login=vk_settings['login'], password=vk_settings['password'])
 secret, token = vk.secret, vk.token
@@ -56,6 +57,15 @@ async def botPlay(ctx, url):
     else:
         await ctx.send("Already playing audio.")
         return
+
+
+@bot.command(
+    name='shuffle',
+    pass_context=True
+)
+async def botShuffle(ctx):
+    global playlist
+    random.shuffle(playlist)
 
 
 @bot.command(
