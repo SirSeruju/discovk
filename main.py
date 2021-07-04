@@ -37,6 +37,7 @@ def play(voice):
 async def botPlay(ctx, url):
     global playlist
     if not ctx.author.voice:
+        await ctx.send('You have to be connected to any voice channel.')
         return
     if ctx.voice_client:
         await ctx.voice_client.disconnect()
