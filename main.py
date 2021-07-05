@@ -12,30 +12,35 @@ secret, token = vk.secret, vk.token
 print("Vk - ok")
 
 bot = commands.Bot(command_prefix = discord_settings['prefix'])
-playlist = []
+playlists = {}
 
-def play(voice):
-    global playlist
-    if playlist == []:
+def play(sId, voice):
+    global playlists
+    if playlists[sId] == []:
         return
     else:
         event = threading.Event()
-        for track in playlist:
+        for track in playlists[sId]:
             event.clear()
             try:
-                voice.play(FFmpegOpusAudio(playlist[0]), after=lambda x: event.set())
+                voice.play(FFmpegOpusAudio(playlists[sId][0]), after=lambda x: event.set())
             except Exception as e:
+                del(playlists[sId])
                 return
             event.wait()
-            playlist = playlist[1:] + [playlist[0]]
-
+            playlists[sId] = playlists[sId][1:] + [playlists[sId][0]]
 
 @bot.command(
     name='play',
     pass_context=True,
 )
-async def botPlay(ctx, url):
-    global playlist
+async def botPlay(ctx, *args):
+    global playlists
+    if len(args) != 1:
+        await ctx.send('Invalid play command, see help.')
+        return
+    else:
+        url = args[0]
     if not ctx.author.voice:
         await ctx.send('You have to be connected to any voice channel.')
         return
@@ -50,11 +55,11 @@ async def botPlay(ctx, url):
             assert(len(url.split('/')[-1].split('_')) == 2)
             owner_id, playlist_id = url.split('/')[-1].split("_")
             audios = vk.method("audio.get", owner_id=owner_id, playlist_id=playlist_id)['response']
-            playlist = list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
+            playlists[ctx.message.guild.id] = list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
         except Exception as e:
             await ctx.send("Wrong url, must be like: https://vk.com/music/playlist/111111111_1 or https://vk.com/music/album/111111111_1")
             return
-        threading.Thread(name="player", target=play, args=(voice,)).start()
+        threading.Thread(name="player", target=play, args=(ctx.message.guild.id, voice,)).start()
     else:
         await ctx.send("Already playing audio.")
         return
@@ -62,19 +67,20 @@ async def botPlay(ctx, url):
 
 @bot.command(
     name='shuffle',
-    pass_context=True
+    pass_context=True,
+    description="shuffle the playlist",
 )
 async def botShuffle(ctx):
-    global playlist
-    random.shuffle(playlist)
+    global playlists
+    random.shuffle(playlists[ctx.message.guild.id])
 
 
 @bot.command(
     name='next',
     pass_context=True,
+    description="next composition in the playlist",
 )
 async def botNext(ctx):
-    global playlist
     if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
         ctx.voice_client.stop()
     else:
@@ -84,9 +90,9 @@ async def botNext(ctx):
 @bot.command(
     name='pause',
     pass_context=True,
+    description="pause bot",
 )
 async def botPause(ctx):
-    global playlist
     if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
         ctx.voice_client.pause()
     else:
@@ -96,9 +102,9 @@ async def botPause(ctx):
 @bot.command(
     name='resume',
     pass_context=True,
+    description="resume the bot where it paused",
 )
 async def botResume(ctx):
-    global playlist
     if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
         ctx.voice_client.resume()
     else:
@@ -108,12 +114,13 @@ async def botResume(ctx):
 @bot.command(
     name='prev',
     pass_context=True,
+    description="previous composition in the playlist",
 )
 async def botPrev(ctx):
-    global playlist
+    sId = ctx.message.guild.id
     if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
-        playlist = [playlist[-1]] + playlist[:-1]
-        playlist = [playlist[-1]] + playlist[:-1]
+        playlists[sId] = [playlists[sId][-1]] + playlists[sId][:-1]
+        playlists[sId] = [playlists[sId][-1]] + playlists[sId][:-1]
         ctx.voice_client.stop()
     else:
         await ctx.send('You have to be connected to the same voice channel to prev.')
@@ -122,6 +129,7 @@ async def botPrev(ctx):
 @bot.command(
     name='stop',
     pass_context=True,
+    description="stop the bot",
 )
 async def botStop(ctx):
     if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
