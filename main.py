@@ -25,7 +25,6 @@ def play(sId, voice):
             try:
                 voice.play(FFmpegOpusAudio(playlists[sId][0]), after=lambda x: event.set())
             except Exception as e:
-                del(playlists[sId])
                 return
             event.wait()
             playlists[sId] = playlists[sId][1:] + [playlists[sId][0]]
@@ -33,6 +32,8 @@ def play(sId, voice):
 @bot.command(
     name='play',
     pass_context=True,
+    description="Play the playlist with link.",
+    usage="https://vk.com/music/[playlist|album]/xxxxxxxxx_x",
 )
 async def botPlay(ctx, *args):
     global playlists
@@ -68,7 +69,7 @@ async def botPlay(ctx, *args):
 @bot.command(
     name='shuffle',
     pass_context=True,
-    description="shuffle the playlist",
+    description="Shuffle the playlist.",
 )
 async def botShuffle(ctx):
     global playlists
@@ -78,7 +79,7 @@ async def botShuffle(ctx):
 @bot.command(
     name='next',
     pass_context=True,
-    description="next composition in the playlist",
+    description="Next composition in the playlist.",
 )
 async def botNext(ctx):
     if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
@@ -90,7 +91,7 @@ async def botNext(ctx):
 @bot.command(
     name='pause',
     pass_context=True,
-    description="pause bot",
+    description="Pause the bot.",
 )
 async def botPause(ctx):
     if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
@@ -102,7 +103,7 @@ async def botPause(ctx):
 @bot.command(
     name='resume',
     pass_context=True,
-    description="resume the bot where it paused",
+    description="Resume the bot where it paused.",
 )
 async def botResume(ctx):
     if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
@@ -114,7 +115,7 @@ async def botResume(ctx):
 @bot.command(
     name='prev',
     pass_context=True,
-    description="previous composition in the playlist",
+    description="Previous composition in the playlist.",
 )
 async def botPrev(ctx):
     sId = ctx.message.guild.id
@@ -129,7 +130,7 @@ async def botPrev(ctx):
 @bot.command(
     name='stop',
     pass_context=True,
-    description="stop the bot",
+    description="Stop the bot.",
 )
 async def botStop(ctx):
     if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
