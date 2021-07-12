@@ -73,7 +73,10 @@ async def botPlay(ctx, *args):
 )
 async def botShuffle(ctx):
     global playlists
-    random.shuffle(playlists[ctx.message.guild.id])
+    if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:
+        random.shuffle(playlists[ctx.message.guild.id])
+    else:
+        await ctx.send('You have to be connected to the same voice channel to shuffle.')
 
 
 @bot.command(
@@ -82,7 +85,7 @@ async def botShuffle(ctx):
     description="Next composition in the playlist.",
 )
 async def botNext(ctx):
-    if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
+    if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:
         ctx.voice_client.stop()
     else:
         await ctx.send('You have to be connected to the same voice channel to next.')
@@ -94,10 +97,10 @@ async def botNext(ctx):
     description="Pause the bot.",
 )
 async def botPause(ctx):
-    if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
+    if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:
         ctx.voice_client.pause()
     else:
-        await ctx.send('You have to be connected to the same voice channel to pause.')
+        await ctx.send('Bot must be playing and you must be connected to the same voice channel.')
 
 
 @bot.command(
@@ -106,7 +109,7 @@ async def botPause(ctx):
     description="Resume the bot where it paused.",
 )
 async def botResume(ctx):
-    if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
+    if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:
         ctx.voice_client.resume()
     else:
         await ctx.send('You have to be connected to the same voice channel to resume.')
@@ -119,7 +122,7 @@ async def botResume(ctx):
 )
 async def botPrev(ctx):
     sId = ctx.message.guild.id
-    if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
+    if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:
         playlists[sId] = [playlists[sId][-1]] + playlists[sId][:-1]
         playlists[sId] = [playlists[sId][-1]] + playlists[sId][:-1]
         ctx.voice_client.stop()
@@ -133,7 +136,7 @@ async def botPrev(ctx):
     description="Stop the bot.",
 )
 async def botStop(ctx):
-    if ctx.author.voice.channel and ctx.author.voice.channel == ctx.voice_client.channel:
+    if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:
         await ctx.voice_client.disconnect()
     else:
         await ctx.send('You have to be connected to the same voice channel to disconnect me.')
