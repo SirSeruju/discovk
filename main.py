@@ -27,7 +27,20 @@ def play(sId, voice):
             except Exception as e:
                 return
             event.wait()
-            playlists[sId] = playlists[sId][1:] + [playlists[sId][0]]
+            if sId in playlists.keys():
+                playlists[sId] = playlists[sId][1:] + [playlists[sId][0]]
+            else:
+                return
+
+
+def validUrl(url):
+    prefix = '/'.join(url.split('/')[:-1])
+    if (prefix == "https://vk.com/music/playlist" or prefix == "https://vk.com/music/album") and\
+       len(url.split('/')[-1].split("_")) >= 2:
+        return True
+    else:
+        return False
+
 
 @bot.command(
     name='play',
@@ -37,13 +50,6 @@ def play(sId, voice):
 )
 async def botPlay(ctx, *args):
     global playlists
-    def validUrl(url):
-        prefix = '/'.join(url.split('/')[:-1])
-        if (prefix == "https://vk.com/music/playlist" or prefix == "https://vk.com/music/album") and\
-           len(url.split('/')[-1].split("_")) >= 2:
-            return True
-        else:
-            return False
     if len(args) != 1:
         await ctx.send('Invalid play command, see help.')
         return
@@ -72,11 +78,48 @@ async def botPlay(ctx, *args):
 
     if not voice.is_playing():
         playlists[ctx.message.guild.id] = list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
-        threading.Thread(name="player", target=play, args=(ctx.message.guild.id, voice,)).start()
+        threading.Thread(name=str(ctx.message.guild.id) + "Player", target=play, args=(ctx.message.guild.id, voice,)).start()
     else:
         await ctx.send("Already playing audio.")
         return
 
+
+@bot.command(
+    name='add',
+    pass_context=True,
+    description="Add the playlist to the queue.",
+    usage="https://vk.com/music/[playlist|album]/xxxxxxxxx_[xxxx|xxxx_xxxx]",
+)
+async def botPlay(ctx, *args):
+    global playlists
+    if len(args) != 1:
+        await ctx.send('Invalid add command, see help.')
+        return
+    else:
+        url = args[0]
+    if not validUrl(url):
+        await ctx.send("Wrong url format, see help.")
+        return
+    try:
+        owner_id, playlist_id = url.split('/')[-1].split("_")[:2]
+        audios = vk.method("audio.get", owner_id=owner_id, playlist_id=playlist_id)['response']
+    except Exception as e:
+        await ctx.send("Invalid url.")
+        return
+    if len(audios['items']) == 0:
+        await ctx.send("Playlist not found.")
+        return
+
+    if not ctx.message.guild.id in playlists.keys():
+        await ctx.send('Current playlist is empty, use play command instead.')
+        return
+    if not ctx.author.voice:
+        await ctx.send('You have to be connected to same voice channel.')
+        return
+    if not ctx.voice_client:
+        await ctx.send('I have to be connected to same voice channel.')
+        return
+    playlists[ctx.message.guild.id] += list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
 
 @bot.command(
     name='shuffle',
@@ -150,6 +193,7 @@ async def botPrev(ctx):
 async def botStop(ctx):
     if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:
         await ctx.voice_client.disconnect()
+        del(playlists[ctx.message.guild.id])
     else:
         await ctx.send('You have to be connected to the same voice channel to disconnect me.')
 
