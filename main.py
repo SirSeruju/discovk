@@ -58,6 +58,9 @@ async def botPlay(ctx, *args):
     except Exception as e:
         await ctx.send("Invalid url.")
         return
+    if len(audios['items']) == 0:
+        await ctx.send("Playlist not found.")
+        return
 
 
     if not ctx.author.voice:
