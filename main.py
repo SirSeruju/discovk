@@ -33,15 +33,33 @@ def play(sId, voice):
     name='play',
     pass_context=True,
     description="Play the playlist with link.",
-    usage="https://vk.com/music/[playlist|album]/xxxxxxxxx_x",
+    usage="https://vk.com/music/[playlist|album]/xxxxxxxxx_[xxxx|xxxx_xxxx]",
 )
 async def botPlay(ctx, *args):
     global playlists
+    def validUrl(url):
+        prefix = '/'.join(url.split('/')[:-1])
+        if (prefix == "https://vk.com/music/playlist" or prefix == "https://vk.com/music/album") and\
+           len(url.split('/')[-1].split("_")) >= 2:
+            return True
+        else:
+            return False
     if len(args) != 1:
         await ctx.send('Invalid play command, see help.')
         return
     else:
         url = args[0]
+    if not validUrl(url):
+        await ctx.send("Wrong url format, see help.")
+        return
+    try:
+        owner_id, playlist_id = url.split('/')[-1].split("_")[:2]
+        audios = vk.method("audio.get", owner_id=owner_id, playlist_id=playlist_id)['response']
+    except Exception as e:
+        await ctx.send("Invalid url.")
+        return
+
+
     if not ctx.author.voice:
         await ctx.send('You have to be connected to any voice channel.')
         return
@@ -50,16 +68,7 @@ async def botPlay(ctx, *args):
     voice = await ctx.author.voice.channel.connect()
 
     if not voice.is_playing():
-        try:
-            assert('/'.join(url.split('/')[:-1]) == "https://vk.com/music/playlist" or\
-                   '/'.join(url.split('/')[:-1]) == "https://vk.com/music/album")
-            assert(len(url.split('/')[-1].split('_')) == 2)
-            owner_id, playlist_id = url.split('/')[-1].split("_")
-            audios = vk.method("audio.get", owner_id=owner_id, playlist_id=playlist_id)['response']
-            playlists[ctx.message.guild.id] = list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
-        except Exception as e:
-            await ctx.send("Wrong url, must be like: https://vk.com/music/playlist/111111111_1 or https://vk.com/music/album/111111111_1")
-            return
+        playlists[ctx.message.guild.id] = list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
         threading.Thread(name="player", target=play, args=(ctx.message.guild.id, voice,)).start()
     else:
         await ctx.send("Already playing audio.")
