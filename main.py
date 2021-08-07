@@ -90,7 +90,7 @@ async def botPlay(ctx, *args):
     description="Add the playlist to the queue.",
     usage="https://vk.com/music/[playlist|album]/xxxxxxxxx_[xxxx|xxxx_xxxx]",
 )
-async def botPlay(ctx, *args):
+async def botAdd(ctx, *args):
     global playlists
     if len(args) != 1:
         await ctx.send('Invalid add command, see help.')
