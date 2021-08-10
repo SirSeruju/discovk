@@ -12,23 +12,22 @@ secret, token = vk.secret, vk.token
 print("Vk - ok")
 
 bot = commands.Bot(command_prefix = discord_settings['prefix'])
-playlists = {}
+bot.playlists = {}
 
 def play(sId, voice):
-    global playlists
-    if playlists[sId] == []:
+    if bot.playlists[sId] == []:
         return
     else:
         event = threading.Event()
-        for track in playlists[sId]:
+        for track in bot.playlists[sId]:
             event.clear()
             try:
-                voice.play(FFmpegOpusAudio(playlists[sId][0]), after=lambda x: event.set())
+                voice.play(FFmpegOpusAudio(bot.playlists[sId][0]), after=lambda x: event.set())
             except Exception as e:
                 return
             event.wait()
-            if sId in playlists.keys():
-                playlists[sId] = playlists[sId][1:] + [playlists[sId][0]]
+            if sId in bot.playlists.keys():
+                bot.playlists[sId] = bot.playlists[sId][1:] + [bot.playlists[sId][0]]
             else:
                 return
 
@@ -49,7 +48,6 @@ def validUrl(url):
     usage="https://vk.com/music/[playlist|album]/xxxxxxxxx_[xxxx|xxxx_xxxx]",
 )
 async def botPlay(ctx, *args):
-    global playlists
     if len(args) != 1:
         await ctx.send('Invalid play command, see help.')
         return
@@ -77,7 +75,7 @@ async def botPlay(ctx, *args):
     voice = await ctx.author.voice.channel.connect()
 
     if not voice.is_playing():
-        playlists[ctx.message.guild.id] = list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
+        bot.playlists[ctx.message.guild.id] = list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
         threading.Thread(name=str(ctx.message.guild.id) + "Player", target=play, args=(ctx.message.guild.id, voice,)).start()
     else:
         await ctx.send("Already playing audio.")
@@ -91,7 +89,6 @@ async def botPlay(ctx, *args):
     usage="https://vk.com/music/[playlist|album]/xxxxxxxxx_[xxxx|xxxx_xxxx]",
 )
 async def botAdd(ctx, *args):
-    global playlists
     if len(args) != 1:
         await ctx.send('Invalid add command, see help.')
         return
@@ -110,7 +107,7 @@ async def botAdd(ctx, *args):
         await ctx.send("Playlist not found.")
         return
 
-    if not ctx.message.guild.id in playlists.keys():
+    if not ctx.message.guild.id in bot.playlists.keys():
         await ctx.send('Current playlist is empty, use play command instead.')
         return
     if not ctx.author.voice:
@@ -119,7 +116,7 @@ async def botAdd(ctx, *args):
     if not ctx.voice_client:
         await ctx.send('I have to be connected to same voice channel.')
         return
-    playlists[ctx.message.guild.id] += list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
+    bot.playlists[ctx.message.guild.id] += list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
 
 @bot.command(
     name='shuffle',
@@ -127,9 +124,8 @@ async def botAdd(ctx, *args):
     description="Shuffle the playlist.",
 )
 async def botShuffle(ctx):
-    global playlists
     if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:
-        random.shuffle(playlists[ctx.message.guild.id])
+        random.shuffle(bot.playlists[ctx.message.guild.id])
     else:
         await ctx.send('You have to be connected to the same voice channel to shuffle.')
 
@@ -178,8 +174,8 @@ async def botResume(ctx):
 async def botPrev(ctx):
     sId = ctx.message.guild.id
     if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:
-        playlists[sId] = [playlists[sId][-1]] + playlists[sId][:-1]
-        playlists[sId] = [playlists[sId][-1]] + playlists[sId][:-1]
+        bot.playlists[sId] = [bot.playlists[sId][-1]] + bot.playlists[sId][:-1]
+        bot.playlists[sId] = [bot.playlists[sId][-1]] + bot.playlists[sId][:-1]
         ctx.voice_client.stop()
     else:
         await ctx.send('You have to be connected to the same voice channel to prev.')
@@ -193,7 +189,7 @@ async def botPrev(ctx):
 async def botStop(ctx):
     if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:
         await ctx.voice_client.disconnect()
-        del(playlists[ctx.message.guild.id])
+        del(bot.playlists[ctx.message.guild.id])
     else:
         await ctx.send('You have to be connected to the same voice channel to disconnect me.')
 
