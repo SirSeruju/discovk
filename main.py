@@ -3,10 +3,6 @@ from config import discord_settings, vk_settings
 from vk.vkAndroidApi import VkAndroidApi
 from bot.bot import initBot
 
-def urlToPlaylist(url):
-    owner_id, playlist_id = url.split('/')[-1].split("_")[:2]
-    audios = vk.method("audio.get", owner_id=owner_id, playlist_id=playlist_id)['response']
-    return list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
 
 def isValidUrl(url):
     prefix = '/'.join(url.split('/')[:-1])
@@ -18,7 +14,10 @@ def isValidUrl(url):
 
 if __name__ == "__main__":
     vk = VkAndroidApi(login=vk_settings['login'], password=vk_settings['password'])
-    secret, token = vk.secret, vk.token
+    def urlToPlaylist(url):
+        owner_id, playlist_id = url.split('/')[-1].split("_")[:2]
+        audios = vk.method("audio.get", owner_id=owner_id, playlist_id=playlist_id)['response']
+        return list(map(lambda x: vk.to_mp3(x['url']) + "\n", audios['items']))
     print("Vk - ok")
 
     bot = commands.Bot(command_prefix = discord_settings['prefix'])
