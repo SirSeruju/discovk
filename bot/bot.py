@@ -4,6 +4,7 @@ import random
 import bot.commands as commands
 
 def initBot(bot, isValidUrl, urlToPlaylist):
+    bot.playlists = {}
     def play(sId, voice):
         if bot.playlists[sId] == []:
             return

@@ -22,6 +22,5 @@ if __name__ == "__main__":
     print("Vk - ok")
 
     bot = commands.Bot(command_prefix = discord_settings['prefix'])
-    bot.playlists = {}
     initBot(bot, isValidUrl, urlToPlaylist)
     bot.run(discord_settings['token'])
