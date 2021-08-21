@@ -1,3 +1,4 @@
+import random
 def add(bot):
     @bot.command(
         name='shuffle',
