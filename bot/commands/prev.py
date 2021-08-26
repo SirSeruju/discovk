@@ -1,8 +1,8 @@
-def add(bot):
+def add(bot, translation):
     @bot.command(
         name='prev',
         pass_context=True,
-        description="Previous composition in the playlist.",
+        description=translation["description"],
     )
     async def botPrev(ctx):
         sId = ctx.message.guild.id

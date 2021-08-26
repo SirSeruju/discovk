@@ -1,8 +1,8 @@
-def add(bot):
+def add(bot, translation):
     @bot.command(
         name='stop',
         pass_context=True,
-        description="Stop the bot.",
+        description=translation["description"],
     )
     async def botStop(ctx):
         if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:

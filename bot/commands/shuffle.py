@@ -1,9 +1,9 @@
 import random
-def add(bot):
+def add(bot, translation):
     @bot.command(
         name='shuffle',
         pass_context=True,
-        description="Shuffle the playlist.",
+        description=translation["description"],
     )
     async def botShuffle(ctx):
         if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:

@@ -1,8 +1,8 @@
-def add(bot):
+def add(bot, translation):
     @bot.command(
         name='next',
         pass_context=True,
-        description="Next composition in the playlist.",
+        description=translation["description"],
     )
     async def botNext(ctx):
         if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:

@@ -1,9 +1,9 @@
-def add(bot, isValidUrl, urlToPlaylist):
+def add(bot, translation, isValidUrl, urlToPlaylist):
     @bot.command(
         name='add',
         pass_context=True,
-        description="Add the playlist to the queue.",
-        usage="https://vk.com/music/[playlist|album]/xxxxxxxxx_[xxxx|xxxx_xxxx]",
+        description=translation["description"],
+        usage=translation["usage"],
     )
     async def botAdd(ctx, *args):
         if len(args) != 1:

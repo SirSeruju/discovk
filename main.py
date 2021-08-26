@@ -1,5 +1,6 @@
 from discord.ext import commands
 from config import discord_settings, vk_settings
+from translation import translation
 from vk.vkAndroidApi import VkAndroidApi
 from bot.bot import initBot
 
@@ -21,5 +22,5 @@ if __name__ == "__main__":
     print("Vk - ok")
 
     bot = commands.Bot(command_prefix = discord_settings['prefix'])
-    initBot(bot, isValidUrl, urlToPlaylist)
+    initBot(bot, translation, isValidUrl, urlToPlaylist)
     bot.run(discord_settings['token'])
