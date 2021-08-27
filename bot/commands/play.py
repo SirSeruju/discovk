@@ -20,7 +20,7 @@ def add(bot, translation, isValidUrl, urlToPlaylist, play):
         try:
             playlist = urlToPlaylist(url)
         except Exception as e:
-            await ctx.send("Invalid url.")
+            await ctx.send(translation["invalid_url_error"])
             return
         if not ctx.author.voice:
             await ctx.send('You have to be connected to any voice channel.')

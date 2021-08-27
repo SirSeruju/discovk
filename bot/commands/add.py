@@ -17,7 +17,7 @@ def add(bot, translation, isValidUrl, urlToPlaylist):
         try:
             playlist = urlToPlaylist(url)
         except Exception as e:
-            await ctx.send("Invalid url.")
+            await ctx.send(translation["invalid_url_error"])
             return
 
         if not ctx.message.guild.id in bot.playlists.keys():
