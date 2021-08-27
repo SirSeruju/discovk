@@ -21,6 +21,7 @@ translation = {
         "invalid_usage_error": invalid_usage_error,
         "wrong_url_format_error": wrong_url_format_error,
         "invalid_url_error": invalid_url_error,
+        "current_playlist_is_empty": "Current playlist is empty, use play command instead.",
     },
     "stop": {
         "description": "Stop the bot.",

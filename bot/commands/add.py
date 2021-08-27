@@ -21,7 +21,7 @@ def add(bot, translation, isValidUrl, urlToPlaylist):
             return
 
         if not ctx.message.guild.id in bot.playlists.keys():
-            await ctx.send('Current playlist is empty, use play command instead.')
+            await ctx.send(translation["current_playlist_is_empty"])
             return
         if not ctx.author.voice:
             await ctx.send(translation["not_connected_to_same_channel_error"])
