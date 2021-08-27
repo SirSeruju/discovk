@@ -15,7 +15,7 @@ def add(bot, translation, isValidUrl, urlToPlaylist, play):
         else:
             url = args[0]
         if not isValidUrl(url):
-            await ctx.send("Wrong url format, see help.")
+            await ctx.send(translation["wrong_url_format_error"])
             return
         try:
             playlist = urlToPlaylist(url)
