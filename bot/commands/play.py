@@ -23,7 +23,7 @@ def add(bot, translation, isValidUrl, urlToPlaylist, play):
             await ctx.send(translation["invalid_url_error"])
             return
         if not ctx.author.voice:
-            await ctx.send('You have to be connected to any voice channel.')
+            await ctx.send(translation["not_connected_to_any_channel_error"])
             return
         if ctx.voice_client:
             await ctx.voice_client.disconnect()
@@ -38,5 +38,5 @@ def add(bot, translation, isValidUrl, urlToPlaylist, play):
             bot.playlists[ctx.message.guild.id] = playlist
             threading.Thread(name=str(ctx.message.guild.id) + "Player", target=play, args=(ctx.message.guild.id, voice,)).start()
         else:
-            await ctx.send("Already playing audio.")
+            await ctx.send(translation["already_playing_error"])
             return
