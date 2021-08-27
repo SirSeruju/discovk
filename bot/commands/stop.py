@@ -9,4 +9,4 @@ def add(bot, translation):
             await ctx.voice_client.disconnect()
             del(bot.playlists[ctx.message.guild.id])
         else:
-            await ctx.send('You have to be connected to the same voice channel to disconnect me.')
+            await ctx.send(translation["not_connected_to_same_channel_error"])

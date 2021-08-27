@@ -24,9 +24,9 @@ def add(bot, translation, isValidUrl, urlToPlaylist):
             await ctx.send('Current playlist is empty, use play command instead.')
             return
         if not ctx.author.voice:
-            await ctx.send('You have to be connected to same voice channel.')
+            await ctx.send(translation["not_connected_to_same_channel_error"])
             return
         if not ctx.voice_client:
-            await ctx.send('I have to be connected to same voice channel.')
+            await ctx.send(translation["not_connected_to_same_channel_error"])
             return
         bot.playlists[ctx.message.guild.id] += playlist

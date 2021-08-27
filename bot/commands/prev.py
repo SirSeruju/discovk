@@ -11,4 +11,4 @@ def add(bot, translation):
             bot.playlists[sId] = [bot.playlists[sId][-1]] + bot.playlists[sId][:-1]
             ctx.voice_client.stop()
         else:
-            await ctx.send('You have to be connected to the same voice channel to prev.')
+            await ctx.send(translation["not_connected_to_same_channel_error"])

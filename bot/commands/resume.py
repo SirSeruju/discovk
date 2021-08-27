@@ -8,4 +8,4 @@ def add(bot, translation):
         if ctx.author.voice and ctx.voice_client and ctx.author.voice.channel == ctx.voice_client.channel:
             ctx.voice_client.resume()
         else:
-            await ctx.send('You have to be connected to the same voice channel to resume.')
+            await ctx.send(translation["not_connected_to_same_channel_error"])
