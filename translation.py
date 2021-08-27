@@ -3,7 +3,6 @@ translation = {
     "play": {
         "description": "Play the playlist with link.",
         "usage": "https://vk.com/music/[playlist|album]/xxxxxxxxx_[xxxx|xxxx_xxxx]",
-        "not_connected_to_same_channel_error": not_connected_to_same_channel_error + "play.",
     },
     "add": {
         "description": "Add the playlist to the queue.",
