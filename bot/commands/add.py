@@ -7,7 +7,7 @@ def add(bot, translation, isValidUrl, urlToPlaylist):
     )
     async def botAdd(ctx, *args):
         if len(args) != 1:
-            await ctx.send('Invalid add command, see help.')
+            await ctx.send(translation["invalid_usage_error"])
             return
         else:
             url = args[0]
