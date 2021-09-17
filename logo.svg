@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="33.357788mm"
+   height="18.342403mm"
+   viewBox="0 0 33.357788 18.342403"
+   version="1.1"
+   id="svg836"
+   inkscape:version="1.1 (c4e8f9ed74, 2021-05-24)"
+   sodipodi:docname="logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview838"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1.8973437"
+     inkscape:cx="68.253316"
+     inkscape:cy="51.914685"
+     inkscape:window-width="1914"
+     inkscape:window-height="1054"
+     inkscape:window-x="0"
+     inkscape:window-y="20"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs833" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-14.298392,-15.430977)">
+    <g
+       id="g1513">
+      <path
+         id="path13222"
+         style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2.65753;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stop-color:#000000"
+         d="m 23.424335,20.658078 a 3.8991343,3.8991343 0 0 1 1.949567,-3.376749 3.8991343,3.8991343 0 0 1 3.899133,0 m -5.848699,3.376751 v 7.798268 m 2e-6,-2e-6 a 3.8991343,3.8991343 0 0 1 -2.407,3.602331 3.8991343,3.8991343 0 0 1 -4.249239,-0.845226 3.8991343,3.8991343 0 0 1 -0.845226,-4.249239 3.8991343,3.8991343 0 0 1 3.602331,-2.406999" />
+      <text
+         xml:space="preserve"
+         style="font-size:16.9333px;line-height:1.25;font-family:'Fredoka One';-inkscape-font-specification:'Fredoka One';fill:#000000;stroke-width:0.264583;fill-opacity:1"
+         x="25.575174"
+         y="33.67178"
+         id="text2696"><tspan
+           sodipodi:role="line"
+           id="tspan2694"
+           style="font-size:16.9333px;fill:#000000;stroke-width:0.264583;fill-opacity:1"
+           x="25.575174"
+           y="33.67178">Vk</tspan></text>
+    </g>
+  </g>
+</svg>

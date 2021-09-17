@@ -1,4 +1,6 @@
 # discovk
+![logo](logo.svg)
+
 Discord bot for playing Vk playlists
 
 Make sure you installed ffmpeg
