@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  discovk:
+    build: .
+    environment:
+      DISCORD_BOT_TOKEN:
+      DISCORD_BOT_NAME:
+      DISCORD_BOT_ID:
+      DISCORD_BOT_PREFIX:
+      VK_LOGIN:
+      VK_PASSWORD:
