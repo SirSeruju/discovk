@@ -1,5 +1,4 @@
-# discovk
-![logo](logo.svg)
+# discovk ![logo](logo.svg)
 
 ## Description
 Discord bot for playing Vk playlists
