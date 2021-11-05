@@ -1,8 +1,9 @@
-FROM python:3.9.6-slim
+FROM alpine
 WORKDIR /discovk
 COPY ./src /discovk
-RUN apt update &&\
-    apt install -y git ffmpeg &&\
-    pip install -r /discovk/requirements.txt &&\
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-CMD ["python", "/discovk/main.py"]
+RUN apk update &&\
+    apk add --no-cache python3 ffmpeg &&\
+    apk add --no-cache py3-pip gcc python3-dev musl-dev libffi-dev make &&\
+    pip3 install -r /discovk/requirements.txt &&\
+    apk del gcc python3-dev musl-dev libffi-dev make
+CMD ["python3", "/discovk/main.py"]
