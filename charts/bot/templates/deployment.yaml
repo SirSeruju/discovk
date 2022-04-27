@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app.fullname" . }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "app.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "app.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+          - name: DISCORD_BOT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "app.fullname" . }}
+                key: DISCORD_BOT_TOKEN
+          - name: DISCORD_BOT_NAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "app.fullname" . }}
+                key: DISCORD_BOT_NAME
+          - name: DISCORD_BOT_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "app.fullname" . }}
+                key: DISCORD_BOT_ID
+          - name: DISCORD_BOT_PREFIX
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "app.fullname" . }}
+                key: DISCORD_BOT_PREFIX
+          - name: VK_LOGIN
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "app.fullname" . }}
+                key: VK_LOGIN
+          - name: VK_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "app.fullname" . }}
+                key: VK_PASSWORD
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
